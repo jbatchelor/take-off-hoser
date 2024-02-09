@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    private Rigidbody _rocketBody;
+    Rigidbody _rocketBody;
+    AudioSource _thrusterAudio;
     [SerializeField] float forceX = 0f;
     [SerializeField] float forceY = 1f;
     [SerializeField] float forceZ = 0f;
@@ -16,6 +17,7 @@ public class Movement : MonoBehaviour
     void Start()
     {
         _rocketBody = GetComponent<Rigidbody>();
+        _thrusterAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -29,8 +31,13 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
+            if (!_thrusterAudio.isPlaying) _thrusterAudio.Play();
             float newThrustY = forceY * Time.deltaTime * MAX_THRUST;
             _rocketBody.AddRelativeForce(forceX, newThrustY, forceZ);
+        }
+        else
+        {
+            if (_thrusterAudio.isPlaying) _thrusterAudio.Stop();
         }
     }
 
@@ -46,7 +53,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void ApplyRotation(float frameRotation)
+    void ApplyRotation(float frameRotation)
     {
         // freeze rotation so we can manually rotate
         _rocketBody.freezeRotation = true;
