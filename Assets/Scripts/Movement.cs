@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    Rigidbody _rocketBody;
-    AudioSource _thrusterAudio;
-    [SerializeField] float forceX = 0f;
-    [SerializeField] float forceY = 1f;
-    [SerializeField] float forceZ = 0f;
 
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] float forceY = 1f;
     [SerializeField] float MAX_THRUST = 100f;
     [SerializeField] float MAX_ROTATE = 20f;
+
+    Rigidbody _rocketBody;
+    AudioSource _thrusterAudio;
 
     // Start is called before the first frame update
     void Start()
@@ -31,9 +31,9 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            if (!_thrusterAudio.isPlaying) _thrusterAudio.Play();
+            if (!_thrusterAudio.isPlaying) _thrusterAudio.PlayOneShot(mainEngine);
             float newThrustY = forceY * Time.deltaTime * MAX_THRUST;
-            _rocketBody.AddRelativeForce(forceX, newThrustY, forceZ);
+            _rocketBody.AddRelativeForce(0, newThrustY, 0);
         }
         else
         {
