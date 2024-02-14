@@ -9,6 +9,9 @@ public class Movement : MonoBehaviour
     [SerializeField] float forceY = 1f;
     [SerializeField] float MAX_THRUST = 100f;
     [SerializeField] float MAX_ROTATE = 20f;
+    [SerializeField] ParticleSystem portThrusterParticles;
+    [SerializeField] ParticleSystem starboardThrusterParticles;
+    [SerializeField] ParticleSystem mainThrusterParticles;
 
     Rigidbody _rocketBody;
     AudioSource _thrusterAudio;
@@ -31,25 +34,63 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            if (!_thrusterAudio.isPlaying) _thrusterAudio.PlayOneShot(mainEngine);
-            float newThrustY = forceY * Time.deltaTime * MAX_THRUST;
-            _rocketBody.AddRelativeForce(0, newThrustY, 0);
+            StartThrust();
         }
         else
         {
-            if (_thrusterAudio.isPlaying) _thrusterAudio.Stop();
+            StopThrust();
         }
+    }
+
+    private void StartThrust()
+    {
+        float newThrustY = forceY * Time.deltaTime * MAX_THRUST;
+        _rocketBody.AddRelativeForce(0, newThrustY, 0);
+        if (!_thrusterAudio.isPlaying) _thrusterAudio.PlayOneShot(mainEngine);
+        if (!mainThrusterParticles.isPlaying) mainThrusterParticles.Play();
+    }
+
+    private void StopThrust()
+    {
+        if (_thrusterAudio.isPlaying) _thrusterAudio.Stop();
+        if (mainThrusterParticles.isPlaying) mainThrusterParticles.Stop();
     }
 
     void ProcessRotation()
     {
         if (Input.GetKey(KeyCode.A))
         {
-            ApplyRotation(1f);
+            RotatePort();
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            ApplyRotation(-1f);
+            RotateStarboard();
+        }
+    }
+
+    private void RotatePort()
+    {
+        ApplyRotation(1f);
+        if (!portThrusterParticles.isPlaying)
+        {
+            portThrusterParticles.Play();
+        }
+        else
+        {
+            portThrusterParticles.Stop();
+        }
+    }
+
+    private void RotateStarboard()
+    {
+        ApplyRotation(-1f);
+        if (!starboardThrusterParticles.isPlaying)
+        {
+            starboardThrusterParticles.Play();
+        }
+        else
+        {
+            starboardThrusterParticles.Stop();
         }
     }
 
